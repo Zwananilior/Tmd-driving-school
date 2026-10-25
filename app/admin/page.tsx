@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import supabase } from '@/lib/supabase'
+import supabase  from '@/lib/supabase'
 
 export default function AdminDashboard(){
    const [stats, setStats] = useState({ paidPending: 0, upcoming: 0, unread: 0, packages: 0 })
