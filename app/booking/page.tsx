@@ -1,4 +1,4 @@
-import [ supabase } from '@/lib/supabase'
+import { supabase } from '@/lib/supabase'
 import PageHero from '@/components/ui/PageHero'
 import BookingForm from '@/components/booking/BookingForm'
 
