@@ -13,16 +13,16 @@ end,
 suffix = '',
 duration = 1800,
 }: CountUpProps) {
-const ref = useRef<HTMLSpanElement>(null)
+const spanRef = useRef<HTMLSpanElement | null>(null)
 const [value, setValue] = useState(0)
 
 useEffect(() => {
-const el = ref.current
+const element: HTMLSpanElement | null = spanRef.current
 
 ```
-if (!el) return
+if (element === null) return
 
-let frame = 0
+let animationFrame = 0
 let hasAnimated = false
 
 const observer = new IntersectionObserver(
@@ -32,39 +32,43 @@ const observer = new IntersectionObserver(
     hasAnimated = true
     observer.disconnect()
 
-    const start = performance.now()
+    const startTime = performance.now()
+    const animationDuration = Math.max(duration, 0)
 
-    const tick = (now: number) => {
+    const animate = (currentTime: number) => {
       const progress =
-        duration > 0
-          ? Math.min((now - start) / duration, 1)
-          : 1
+        animationDuration === 0
+          ? 1
+          : Math.min(
+              (currentTime - startTime) / animationDuration,
+              1
+            )
 
-      const eased = 1 - Math.pow(1 - progress, 3)
+      const easedProgress = 1 - Math.pow(1 - progress, 3)
 
-      setValue(Math.round(end * eased))
+      setValue(Math.round(end * easedProgress))
 
       if (progress < 1) {
-        frame = requestAnimationFrame(tick)
+        animationFrame = requestAnimationFrame(animate)
       }
     }
 
-    frame = requestAnimationFrame(tick)
+    animationFrame = requestAnimationFrame(animate)
   },
   { threshold: 0.4 }
 )
 
-observer.observe(el)
+observer.observe(element)
 
 return () => {
   observer.disconnect()
-  cancelAnimationFrame(frame)
+  cancelAnimationFrame(animationFrame)
 }
 ```
 
 }, [end, duration])
 
-return ( <span ref={ref}>
+return ( <span ref={spanRef}>
 {value.toLocaleString()}
 {suffix} </span>
 )
