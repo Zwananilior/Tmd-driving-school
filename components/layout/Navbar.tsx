@@ -78,7 +78,7 @@ export default function Navbar(){
 			 <Link key={link.href}
 			 href={link.href} 
 			 onClick={() => setMenuOpen(false)} 
-			 className={"text-sm font-medium ${pathname === link.href ? text-brand-400 : text-gray-300}"}
+			 className="{text-sm font-medium ${pathname === link.href ? text-brand-400 : text-gray-300}"}
 			 >
 			 {link.label}
 			 </Link>
