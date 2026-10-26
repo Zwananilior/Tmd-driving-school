@@ -1,75 +1,78 @@
+
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
 
 interface CountUpProps {
-end: number
-suffix?: string
-duration?: number
+  end: number
+  suffix?: string
+  duration?: number
 }
 
 export default function CountUp({
-end,
-suffix = '',
-duration = 1800,
+  end,
+  suffix = '',
+  duration = 1800,
 }: CountUpProps) {
-const spanRef = useRef<HTMLSpanElement | null>(null)
-const [value, setValue] = useState(0)
+  const elementRef = useRef<HTMLSpanElement>(null)
+  const [value, setValue] = useState(0)
 
-useEffect(() => {
-const element: HTMLSpanElement | null = spanRef.current
+  useEffect(() => {
+    const element = elementRef.current
 
-```
-if (element === null) return
-
-let animationFrame = 0
-let hasAnimated = false
-
-const observer = new IntersectionObserver(
-  ([entry]) => {
-    if (!entry.isIntersecting || hasAnimated) return
-
-    hasAnimated = true
-    observer.disconnect()
-
-    const startTime = performance.now()
-    const animationDuration = Math.max(duration, 0)
-
-    const animate = (currentTime: number) => {
-      const progress =
-        animationDuration === 0
-          ? 1
-          : Math.min(
-              (currentTime - startTime) / animationDuration,
-              1
-            )
-
-      const easedProgress = 1 - Math.pow(1 - progress, 3)
-
-      setValue(Math.round(end * easedProgress))
-
-      if (progress < 1) {
-        animationFrame = requestAnimationFrame(animate)
-      }
+    if (!element) {
+      return
     }
 
-    animationFrame = requestAnimationFrame(animate)
-  },
-  { threshold: 0.4 }
-)
+    let animationFrame = 0
 
-observer.observe(element)
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) {
+          return
+        }
 
-return () => {
-  observer.disconnect()
-  cancelAnimationFrame(animationFrame)
+        observer.disconnect()
+
+        const startTime = window.performance.now()
+
+        const animate = (currentTime: number) => {
+          const progress =
+            duration <= 0
+              ? 1
+              : Math.min(
+                  (currentTime - startTime) / duration,
+                  1
+                )
+
+          const easedProgress = 1 - Math.pow(1 - progress, 3)
+
+          setValue(Math.round(end * easedProgress))
+
+          if (progress < 1) {
+            animationFrame =
+              window.requestAnimationFrame(animate)
+          }
+        }
+
+        animationFrame = window.requestAnimationFrame(animate)
+      },
+      { threshold: 0.4 }
+    )
+
+    observer.observe(element)
+
+    return () => {
+      observer.disconnect()
+      window.cancelAnimationFrame(animationFrame)
+    }
+  }, [end, duration])
+
+  return (
+    <span ref={elementRef}>
+      {value.toLocaleString()}
+      {suffix}
+    </span>
+  )
 }
-```
 
-}, [end, duration])
-
-return ( <span ref={spanRef}>
-{value.toLocaleString()}
-{suffix} </span>
-)
-}
