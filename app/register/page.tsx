@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import PageHero from '@/components/ui/PageHero'
-import GoogleButton from '@/components/Auth/GoogleButton'
+import GoogleButton from '@/components/auth/GoogleButton'
 
 function RegisterForm() {
   const router = useRouter()
